@@ -10,7 +10,7 @@ var config = {
     },
     port: process.env.PORT || 3000,
 
-    db: 'sqlite://user:localhost/app'
+    db: 'sqlite://localhost/sqsc-demo-app'
   },
 
   test: {
@@ -19,7 +19,7 @@ var config = {
       name: 'sqsc-demo-app'
     },
     port: process.env.PORT || 3000,
-    db: 'sqlite://user:localhost/app-test'
+    db: 'sqlite://localhost/sqsc-demo-app-test'
   },
 
   production: {
@@ -28,7 +28,10 @@ var config = {
       name: 'sqsc-demo-app'
     },
     port: process.env.PORT || 3000,
-    db: 'postgres://localhost/sqsc-demo-app-production'
+    db: 'postgres://' +
+      process.env.DB_USER + ':' + process.env.DB_PASSWORD +
+      '@' + process.env.DB_HOST + ':5432' +
+      '/' + process.env.DB_DATABASE
   }
 };
 

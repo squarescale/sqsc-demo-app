@@ -1,13 +1,16 @@
 var express = require('express'),
   config = require('./config/config'),
-  db = require('./app/models');
+  db = require('./app/models'),
+  amqp = require('amqplib');
 
 var app = express();
 
 module.exports = require('./config/express')(app, config);
 
 db.sequelize
-  .sync()
+  .sync({
+    force: true
+  })
   .then(function() {
     if (!module.parent) {
       app.listen(config.port, function() {
@@ -17,9 +20,3 @@ db.sequelize
   }).catch(function(e) {
     throw new Error(e);
   });
-  
-db.Article.create({
-  title: "title",
-  url: "url",
-  text: "text"
-});

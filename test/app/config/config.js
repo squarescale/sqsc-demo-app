@@ -14,8 +14,7 @@ describe('config', function() {
         name: 'sqsc-demo-app'
       },
       port: process.env.PORT || 3000,
-      db: 'sqlite://localhost/sqsc-demo-app-test',
-      storage: config.storage
+      db: 'sqlite://localhost/sqsc-demo-app-test'
     });
   });
 });
