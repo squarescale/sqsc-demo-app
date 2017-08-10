@@ -25,7 +25,7 @@ router.get('/launch', function(req, res) {
   res.sendStatus(200);
 });
 
-async function random(min, max) {
+function random(min, max) {
   return min + Math.floor(Math.random() * (max - min + 1));
 }
 
@@ -33,7 +33,7 @@ async function publishNewMessage() {
   await channel.assertQueue(processingQueueName, {
     durable: true
   });
-  var msg = Buffer.from(random(0, 1000).toString());
+  let msg = Buffer.from(random(0, 1000).toString());
   channel.sendToQueue(processingQueueName, msg);
   console.log(" [x] Sent %s", msg);
 }

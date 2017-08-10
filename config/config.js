@@ -5,21 +5,31 @@ const env = process.env.NODE_ENV || 'development';
 var config = {
   development: {
     root: rootPath,
-    app: { name: 'sqsc-demo-app' },
+    app: {
+      name: 'sqsc-demo-app'
+    },
     port: process.env.PORT || 3000,
-    db: { dialect: 'sqlite'}
+    db: {
+      dialect: 'sqlite'
+    }
   },
 
   test: {
     root: rootPath,
-    app: { name: 'sqsc-demo-app' },
+    app: {
+      name: 'sqsc-demo-app'
+    },
     port: process.env.PORT || 3000,
-    db: { dialect: 'sqlite' }
+    db: {
+      dialect: 'sqlite'
+    }
   },
 
   production: {
     root: rootPath,
-    app: { name: 'sqsc-demo-app' },
+    app: {
+      name: 'sqsc-demo-app'
+    },
     port: process.env.PORT || 3000,
     db: {
       dialect: 'postgres',

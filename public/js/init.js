@@ -5,15 +5,15 @@ $(document).ready(function() {
       url: '/launch',
       statusCode: {
         200: function(res) {
-          $("#sending_result").append("<li>"+new Date()-start+" mlls to send all 1000 messages </li>");
+          $("#sending_result").append("<li> Sending all 1000 messages </li>");
         }
       }
     });
   });
 
   var socket = io();
-  socket.on('newResponse', function (data) {
+  socket.on('newResponse', function(data) {
     console.log(data);
-    $("#getting_result").append("<li>"+data+"</li>");
+    $("#getting_result").append("<li>" + data + "</li>");
   });
 });

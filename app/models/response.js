@@ -1,5 +1,7 @@
-// Response model
-module.exports = function(sequelize, DataTypes) {
+// Example model
+
+
+module.exports = function (sequelize, DataTypes) {
 
   var Response = sequelize.define('Response', {
     container: DataTypes.STRING,
