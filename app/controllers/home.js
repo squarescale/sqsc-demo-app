@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../models');
 const amqp = require('amqplib');
 
-const processingQueueName = process.env.PROCESSING_QUEUE_NAME || "ProcessingQueue";
+const processingQueueName = process.env.PROCESSING_QUEUE_NAME || "processingQueue";
 
 let channel;
 

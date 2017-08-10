@@ -23,8 +23,8 @@ var config = {
     port: process.env.PORT || 3000,
     db: 'postgres://' +
       process.env.COMMON_DB_USER + ':' + process.env.COMMON_DB_PASSWORD +
-      '@' + process.env.COMMON_DB_HOST + ':5432' +
-      '/' + process.env.COMMON_DB_DATABASE
+      '@' + process.env.DB_HOST + ':5432' +
+      '/' + process.env.COMMON_DB_NAME
   }
 };
 

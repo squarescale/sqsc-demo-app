@@ -12,8 +12,9 @@ html(lang='en')
         script(src='http://localhost:35729/livereload.js')
         
   body
-    .container-fluid
-      block content
+    .container
+      .row
+        block content
 
 script(src="components/jquery/dist/jquery.min.js")
 script(src="components/socket.io-client/dist/socket.io.js")
