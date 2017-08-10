@@ -44,10 +44,10 @@ async function start() {
 
     async function consumeQueue(msg) {
       var entityId = msg.content.toString();
-      console.log(" [x] Received '%s'", entityId);
+      // console.log(" [x] Received '%s'", entityId);
       const response = await db.Response.findById(entityId);
       socketIO.emit("newResponse", response);
-      console.log(" [->] Emit '%s'", response);
+      // console.log(" [->] Emit '%s'", response);
     }
   } catch (e) {
     console.warn(e);

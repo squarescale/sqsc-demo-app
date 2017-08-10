@@ -19,7 +19,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/launch', function(req, res) {
-  for (var i = 0; i < 1; i++) {
+  for (var i = 0; i < 10; i++) {
     publishNewMessage();
   }
   res.sendStatus(200);
@@ -35,5 +35,5 @@ async function publishNewMessage() {
   });
   let msg = Buffer.from(random(0, 1000).toString());
   channel.sendToQueue(processingQueueName, msg);
-  console.log(" [x] Sent %s", msg);
+  // console.log(" [x] Sent %s", msg);
 }

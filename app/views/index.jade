@@ -2,10 +2,13 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
   
-  button.btn.btn-success Launch
+  .row
+    p Welcome to #{title}
   
+  .row
+    button.btn.btn-success Launch
+  hr
   .row
     .col-lg-6
       ul#sending_result
