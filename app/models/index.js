@@ -1,10 +1,11 @@
-var fs = require('fs'),
-  path = require('path'),
-  Sequelize = require('sequelize'),
-  config = require('../../config/config'),
-  db = {};
+const fs = require('fs');
+const path = require('path');
+const Sequelize = require('sequelize');
+const config = require('../../config/config');
 
-var sequelize = new Sequelize(config.db);
+var db = {};
+
+const sequelize = new Sequelize(config.db);
 
 fs.readdirSync(__dirname).filter(function(file) {
   return (file.indexOf('.') !== 0) && (file !== 'index.js');
@@ -20,6 +21,4 @@ Object.keys(db).forEach(function(modelName) {
 });
 
 db.sequelize = sequelize;
-db.Sequelize = Sequelize;
-
 module.exports = db;

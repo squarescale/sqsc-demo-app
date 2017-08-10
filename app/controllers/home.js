@@ -1,20 +1,16 @@
-var express = require('express'),
-  router = express.Router(),
-  db = require('../models'),
-  amqp = require('amqplib/callback_api');
+const express = require('express');
+const router = express.Router();
+const db = require('../models');
+const amqp = require('amqplib');
+
+const processingQueueName = process.env.PROCESSING_QUEUE_NAME || "ProcessingQueue";
+
+let channel;
 
 module.exports = function(app) {
   app.use('/', router);
+  channel = app.get("rabbitMQChannel");
 };
-
-var channel = null;
-var intervalId;
-
-amqp.connect(`amqp://${process.env.RABBITMQ_HOST}`, function(err, conn) {
-  conn.createChannel(function(err, ch) {
-    channel = ch;
-  });
-});
 
 router.get('/', function(req, res, next) {
   res.render('index', {
@@ -23,21 +19,21 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/launch', function(req, res) {
-  console.time("sendMessages");
-  for (var i = 0; i < 1000; i++) {
+  for (var i = 0; i < 1; i++) {
     publishNewMessage();
   }
-  console.timeEnd("sendMessages")
-
-  res.send(200);
+  res.sendStatus(200);
 });
 
-function publishNewMessage() {
-  var q = "ProcessingQueue";
-  channel.assertQueue(q, {
+async function random(min, max) {
+  return min + Math.floor(Math.random() * (max - min + 1));
+}
+
+async function publishNewMessage() {
+  await channel.assertQueue(processingQueueName, {
     durable: false
   });
-  // Note: on Node 6 Buffer.from(msg) should be used
-  channel.sendToQueue(q, new Buffer(Math.random()));
-  console.log(" [x] Sent " + Math.random() + "]");
+  var msg = Buffer.from(random(0, 1000).toString());
+  channel.sendToQueue(processingQueueName, msg);
+  console.log(" [x] Sent %s", msg);
 }
