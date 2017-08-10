@@ -5,7 +5,7 @@ $(document).ready(function() {
       url: '/launch',
       statusCode: {
         200: function(res) {
-          $("#sending_result").append(new Date()-start+" mlls to send all 1000 messages");
+          $("#sending_result").append("<li>"+new Date()-start+" mlls to send all 1000 messages </li>");
         }
       }
     });

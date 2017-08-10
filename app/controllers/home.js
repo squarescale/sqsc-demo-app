@@ -31,7 +31,7 @@ async function random(min, max) {
 
 async function publishNewMessage() {
   await channel.assertQueue(processingQueueName, {
-    durable: false
+    durable: true
   });
   var msg = Buffer.from(random(0, 1000).toString());
   channel.sendToQueue(processingQueueName, msg);

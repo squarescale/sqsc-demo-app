@@ -21,10 +21,13 @@ var config = {
     root: rootPath,
     app: { name: 'sqsc-demo-app' },
     port: process.env.PORT || 3000,
-    db: 'postgres://' +
-      process.env.COMMON_DB_USER + ':' + process.env.COMMON_DB_PASSWORD +
-      '@' + process.env.DB_HOST + ':5432' +
-      '/' + process.env.COMMON_DB_NAME
+    db: {
+      dialect: 'postgres',
+      host: process.env.DB_HOST,
+      username: process.env.COMMON_DB_USERNAME,
+      password: process.env.COMMON_DB_PASSWORD,
+      database: process.env.COMMON_DB_NAME
+    }
   }
 };
 

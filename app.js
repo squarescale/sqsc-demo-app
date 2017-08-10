@@ -46,7 +46,7 @@ async function start() {
       console.log(" [x] Received '%s'", entityId);
       db.Response.find({
           where: {
-            id: entityId
+            id: parseInt(entityId)
           }
         })
         .then(function(response) {
