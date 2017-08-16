@@ -1,9 +1,6 @@
-FROM node:8.2-alpine
+FROM node:8.4
 
 ENV NODE_ENV production
-
-# Add git 
-RUN apk add --no-cache --virtual git
 
 # Create app directory
 RUN mkdir -p /usr/src/app
