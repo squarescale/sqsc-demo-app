@@ -6,7 +6,7 @@ const amqp = require('amqplib');
 
 const processingQueueName = process.env.PROCESSING_QUEUE_NAME || "processingQueue";
 
-const precision = 100000;
+const precision = 100;
 const computeWidth = 10;
 const imageWidth = 900;
 const imageHeight= 600;
