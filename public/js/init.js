@@ -54,25 +54,14 @@ $(document).ready(function() {
       }
     });
   });
+  
+  let ctx = document.getElementById('result').getContext('2d');
 
   var socket = io();
   socket.on('newResponse', function(data) {
-    console.log(data.container);
-    $('#img_results').append('<img id="theImg" src="'+data.result+'" />')
+    let image = new Image();
+    image.src = data.result;
 
-    // var image = new Image;
-    // image.onload = checkload;
-    // image.src = data.base64;
-    //
-    // var canvas = $('canvas');
-    // var context = canvas.getContext('2d');
-    // context.drawImage(image, data.step, 0, 900, 600);
-    //
-    // var combined = new Image;
-    // combined.src = canvas.toDataURL('data/gif');
-    // $("#img_results").appendChild(combined);
-
-    // console.log(data);
-    // $("#getting_result").append("<li> Container :" + data.container + " - Result : " + data.result + " </li>");
+    image.onload = () => ctx.drawImage(image, 0, 0, data.stepX, data.stepY, data.step, 0, data.stepX, data.stepY);
   });
 });
