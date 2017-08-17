@@ -36,7 +36,7 @@ var config = {
       host: process.env.DB_HOST,
       username: process.env.COMMON_DB_USERNAME,
       password: process.env.COMMON_DB_PASSWORD,
-      database: process.env.COMMON_DB_NAME
+      database: process.env.COMMON_DB_NAME,
     }
   }
 };
