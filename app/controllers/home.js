@@ -3,8 +3,6 @@ const router = express.Router();
 
 const processingQueueName = process.env.PROCESSING_QUEUE_NAME || "processingQueue";
 
-const precision = 100;
-const computeWidth = 10;
 const imageWidth = 900;
 const imageHeight= 600;
 
@@ -19,11 +17,16 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.get('/launch', function(req, res) {
+router.post('/launch', function(req, res) {
+  let params = req.body;
+  console.log(params)
   let app = req.app;
   let taskMessage;
-  for (var i = 0; i < imageWidth / computeWidth; i++) {
-    taskMessage = getTaskMessage(i * computeWidth);
+  for (var i = 0; i < imageWidth / params.stepX; i++) {
+    taskMessage = getTaskMessage(i * params.stepX, 
+      parseInt(params.precision), 
+      parseInt(params.stepX), 
+      parseInt(params.stepY));
     app.get('rabbitMQChannel').sendToQueue(processingQueueName, taskMessage);
     console.log(`app - [x] Sent new task ${taskMessage}`);
     app.get('socketIO').emit('compute_task_created');
@@ -31,7 +34,7 @@ router.get('/launch', function(req, res) {
   res.sendStatus(200);
 });
 
-function getTaskMessage(col) {
+function getTaskMessage(col, precision, stepX, stepY) {
 
   return Buffer.from(JSON.stringify({
     x: 0,
@@ -41,8 +44,8 @@ function getTaskMessage(col) {
     width: imageWidth,
     height: imageHeight,
     step: col,
-    stepX : computeWidth,
-    stepY : imageHeight,
-    iter: precision
+    stepX : stepX || 10,
+    stepY : stepY || imageHeight,
+    iter: precision || 10
   }));
 }
