@@ -5,8 +5,11 @@ block content
   .row.vertical-align
     h1.col-sm-6= title
     button.btn.btn-success.col-sm-3 Launch
+  p Mathematical visualization of the 
+    a(href="https://en.wikipedia.org/wiki/Mandelbrot_set", target="blank") Mandelbrot set
 
   .alert.alert-danger.error.hidden(role="alert")
+
   hr
 
   .row
@@ -19,11 +22,25 @@ block content
         dd#computeTaskRemaining
         dt Total compute time 
         dd.time
-        dt Compute speed (task/minute)
+        dt Compute speed (computation / second)
         dd#computeSpeed
       table#containersStats.table.table-striped.center
         thead
           tr
             th Docker container Id
             th Tasks computed 
+        tbody
+
+  hr
+
+  #sessionResults.hidden
+    h2 Session results
+    table#results.table
+      thead
+        tr
+          th Start Time
+          th Tasks
+          th Workers
+          th Compute time (ms)
+          th Compute speed (computation / second)
         tbody

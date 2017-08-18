@@ -47,8 +47,7 @@ $(document).ready(function() {
   let ctx = document.getElementById('result').getContext('2d');
   let start, end;
   let stats;
-
-  
+  let sessionResults = [];
 
   $('button').bind("click", function() {
     $('button').attr('disabled', 'disabled');
@@ -71,7 +70,7 @@ $(document).ready(function() {
 
   socket.on('compute_task_created', () => {
     if (stats.computeTaskCreated === 0) {
-      start = new Date().getTime();
+      stats.startTime = new Date().getTime();
       $('#stats').removeClass('hidden');
       $('#containersStats tbody').empty();
     }
@@ -96,21 +95,23 @@ $(document).ready(function() {
     stats.computeTaskRemaining--;
     $('#computeTaskRemaining').text(stats.computeTaskRemaining);
 
-    current = new Date().getTime();
-    stats.computeTime = current - start;
+    stats.computeTime = new Date().getTime() - stats.startTime;
     $('.time').text(`${stats.computeTime} ms`);
 
     
     if (stats.computeTaskRemaining === 0) {
       $('button').removeAttr('disabled');
       
-      stats.computeSpeed = 60 * 1000 * stats.computeTaskCreated / stats.computeTime;
-      $('#computeSpeed').text(stats.computeSpeed.toFixed(0));
+      stats.computeSpeed = 1000 * 900 * 600 / stats.computeTime;
+      $('#computeSpeed').text(stats.computeSpeed.toLocaleString('fr', {maximumFractionDigits: 0}));
+
+      addNewResult(stats);
     }
   });
 
   function initStats() {
     return {
+      startTime: null,
       computeTaskCreated: 0,
       computeTaskRemaining: 0,
       computeTime: 0,
@@ -122,7 +123,24 @@ $(document).ready(function() {
   function updateContainersStats() {
     $('#containersStats tbody').empty();
     Object.entries(stats.containers).forEach(([containerId, count]) => {
-      $('#containersStats tbody').append(`<tr><td>${containerId}</td><td>${count}</td></tr>`)
+      $('#containersStats tbody').append(`
+        <tr>
+          <td>${containerId}</td>
+          <td>${count}</td>
+        </tr>`)
     });
+  }
+
+  function addNewResult(stats) {
+    sessionResults.push(stats);
+    $('#sessionResults').removeClass('hidden');
+    $('table#results tbody').prepend(`
+        <tr>
+          <td>${new Date(stats.startTime).toLocaleTimeString()}</td>
+          <td>${stats.computeTaskCreated}</td>
+          <td>${Object.entries(stats.containers).length}</td>
+          <td>${stats.computeTime}</td>
+          <td>${stats.computeSpeed.toLocaleString('fr', {maximumFractionDigits: 0})}</td>
+        </tr>`);
   }
 });
