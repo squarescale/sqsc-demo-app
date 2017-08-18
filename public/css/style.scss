@@ -3,7 +3,6 @@
  */
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
-  padding-top: 85px;
 }
 /*
  * Global add-ons
@@ -102,6 +101,7 @@ body {
   border-radius: 50%;
 }
 
-canvas {
-    display: none;
+.vertical-align {
+  display: flex;
+  align-items: center;
 }

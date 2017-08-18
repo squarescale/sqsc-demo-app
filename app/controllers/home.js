@@ -6,16 +6,18 @@ const amqp = require('amqplib');
 
 const processingQueueName = process.env.PROCESSING_QUEUE_NAME || "processingQueue";
 
-const precision = 10000;
+const precision = 100;
 const computeWidth = 10;
 const imageWidth = 900;
 const imageHeight= 600;
 let channel;
+let socketIO;
 
 
 module.exports = function(app) {
   app.use('/', router);
   channel = app.get("rabbitMQChannel");
+  socketIO = app.get('socketIO');
 };
 
 router.get('/', function(req, res, next) {
@@ -27,6 +29,7 @@ router.get('/', function(req, res, next) {
 router.get('/launch', function(req, res) {
   for (var i = 0; i < imageWidth / computeWidth; i++) {
     publishNewMessage(i * computeWidth);
+    socketIO.emit('compute_task_created');
   }
   res.sendStatus(200);
 });

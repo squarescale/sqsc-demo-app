@@ -1,6 +1,6 @@
 $(document).ready(function() {
   // var $loader = $('#loader').show();
-  mandelData = {
+  let mandelData = {
     x: 0,
     y: 0,
     scaleX: 1,
@@ -44,7 +44,23 @@ $(document).ready(function() {
     // loadImg();
   // });
 
+  let ctx = document.getElementById('result').getContext('2d');
+  let start, end;
+  let stats = {
+    computeTaskCreated: 0,
+    computeTaskRemaining: 0,
+    computeTime: 0,
+    containers: {},
+    computeSpeed: 0
+  };
+
   $('button').bind("click", function() {
+    start = new Date().getTime();
+    $('#stats').removeClass('hidden');
+    $('#containersStats tbody').empty();
+
+    $('button').attr('disabled', 'disabled');
+
     $.ajax({
       url: '/launch',
       statusCode: {
@@ -55,13 +71,45 @@ $(document).ready(function() {
     });
   });
   
-  let ctx = document.getElementById('result').getContext('2d');
+  const socket = io();
 
-  var socket = io();
+  socket.on('compute_task_created', () => {
+    stats.computeTaskCreated++;
+    $('#computeTaskCount').text(stats.computeTaskCreated);
+    stats.computeTaskRemaining++;
+    $('#computeTaskRemaining').text(stats.computeTaskRemaining);
+  });
+
   socket.on('newResponse', function(data) {
     let image = new Image();
     image.src = data.result;
 
     image.onload = () => ctx.drawImage(image, 0, 0, data.stepX, data.stepY, data.step, 0, data.stepX, data.stepY);
+  
+    if (!stats.containers[data.container]) {
+      stats.containers[data.container] = 0;
+    }
+    stats.containers[data.container]++;
+    updateContainersStats();
+
+    stats.computeTaskRemaining--;
+    $('#computeTaskRemaining').text(stats.computeTaskRemaining);
+
+    if (stats.computeTaskRemaining === 0) {
+      end = new Date().getTime();
+      stats.computeTime = end - start;
+      $('.time').text(`${stats.computeTime} ms`);
+      $('button').removeAttr('disabled');
+
+      stats.computeSpeed = 60 * 1000 * stats.computeTaskCreated / stats.computeTime;
+      $('#computeSpeed').text(stats.computeSpeed.toFixed(0));
+    }
   });
+
+  function updateContainersStats() {
+    $('#containersStats tbody').empty();
+    Object.entries(stats.containers).forEach(([containerId, count]) => {
+      $('#containersStats tbody').append(`<tr><td>${containerId}</td><td>${count}</td></tr>`)
+    });
+  }
 });

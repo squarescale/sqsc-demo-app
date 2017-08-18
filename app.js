@@ -38,7 +38,8 @@ async function start() {
 
     // Loading app
     const app = await express();
-    await app.set("rabbitMQChannel", channel);
+    app.set("rabbitMQChannel", channel);
+    app.set('socketIO', socketIO);
     app.listen(config.port, function() {
       socketIO.listen(this);
       require('./config/express')(app, config);

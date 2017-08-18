@@ -2,26 +2,27 @@ extends layout
 
 block content
 
-  h1= title
-
-  .row
-    p Welcome to #{title}
-
-  .row#img_results
-    
-    
-  .row
-    ul#sending_results
+  .row.vertical-align
+    h1.col-sm-6= title
+    button.btn.btn-success.col-sm-3 Launch
 
   hr
-  .row
-    button.btn.btn-success Launch
 
-  hr
   .row
-    .col-lg-6
-      ul#sending_result
-    .col-lg-6
-      ul#getting_result
-
-  canvas#result(width="900",height="600")
+    canvas#result(width="900",height="600")
+    #stats.col-sm-2.pull-right.hidden
+      dl
+        dt Tasks created
+        dd#computeTaskCount
+        dt Tasks remaining
+        dd#computeTaskRemaining
+        dt Total compute time 
+        dd.time
+        dt Compute speed (task/minute)
+        dd#computeSpeed
+      table#containersStats.table.table-striped.center
+        thead
+          tr
+            th Docker container Id
+            th Tasks computed 
+        tbody
