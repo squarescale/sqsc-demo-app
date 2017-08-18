@@ -55,18 +55,15 @@ $(document).ready(function() {
   };
 
   $('button').bind("click", function() {
-    start = new Date().getTime();
-    $('#stats').removeClass('hidden');
-    $('#containersStats tbody').empty();
-
     $('button').attr('disabled', 'disabled');
+    $('.error').addClass('hidden');
 
     $.ajax({
       url: '/launch',
-      statusCode: {
-        200: function(res) {
-          $("#sending_results").append("<li> Sending 10 new messages </li>");
-        }
+      error: (req, status, error) => {
+        $('.error').removeClass('hidden');
+        $('.error').text('Remote server not responding');
+        $('button').removeAttr('disabled');
       }
     });
   });
@@ -74,6 +71,11 @@ $(document).ready(function() {
   const socket = io();
 
   socket.on('compute_task_created', () => {
+    if (stats.computeTaskCreated === 0) {
+      start = new Date().getTime();
+      $('#stats').removeClass('hidden');
+      $('#containersStats tbody').empty();
+    }
     stats.computeTaskCreated++;
     $('#computeTaskCount').text(stats.computeTaskCreated);
     stats.computeTaskRemaining++;
