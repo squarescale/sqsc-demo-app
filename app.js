@@ -38,7 +38,7 @@ async function start() {
 
     // Loading app
     const app = await express();
-    app.set("rabbitMQChannel", channel);
+    app.set('rabbitMQChannel', channel);
     app.set('socketIO', socketIO);
     app.listen(config.port, function() {
       socketIO.listen(this);
@@ -47,10 +47,10 @@ async function start() {
 
     async function consumeQueue(msg) {
       var entityId = msg.content.toString();
-      console.log(" [x] Received '%s'", entityId);
+      console.log(` [x] Received info that task ${entityId} if done`);
       const response = await db.Response.findById(parseInt(entityId));
-      console.log(" [->] Emit '%s'", response.id);
-      socketIO.emit("newResponse", response);
+      console.log(` [->] Send result of task ${response.id} to web client`);
+      socketIO.emit("compute_task_result", response);
     }
   } catch (e) {
     console.warn(e);

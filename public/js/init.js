@@ -46,17 +46,16 @@ $(document).ready(function() {
 
   let ctx = document.getElementById('result').getContext('2d');
   let start, end;
-  let stats = {
-    computeTaskCreated: 0,
-    computeTaskRemaining: 0,
-    computeTime: 0,
-    containers: {},
-    computeSpeed: 0
-  };
+  let stats;
+
+  
 
   $('button').bind("click", function() {
     $('button').attr('disabled', 'disabled');
     $('.error').addClass('hidden');
+    stats = initStats();
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, 900, 600);
 
     $.ajax({
       url: '/launch',
@@ -82,7 +81,7 @@ $(document).ready(function() {
     $('#computeTaskRemaining').text(stats.computeTaskRemaining);
   });
 
-  socket.on('newResponse', function(data) {
+  socket.on('compute_task_result', function(data) {
     let image = new Image();
     image.src = data.result;
 
@@ -97,16 +96,28 @@ $(document).ready(function() {
     stats.computeTaskRemaining--;
     $('#computeTaskRemaining').text(stats.computeTaskRemaining);
 
-    if (stats.computeTaskRemaining === 0) {
-      end = new Date().getTime();
-      stats.computeTime = end - start;
-      $('.time').text(`${stats.computeTime} ms`);
-      $('button').removeAttr('disabled');
+    current = new Date().getTime();
+    stats.computeTime = current - start;
+    $('.time').text(`${stats.computeTime} ms`);
 
+    
+    if (stats.computeTaskRemaining === 0) {
+      $('button').removeAttr('disabled');
+      
       stats.computeSpeed = 60 * 1000 * stats.computeTaskCreated / stats.computeTime;
       $('#computeSpeed').text(stats.computeSpeed.toFixed(0));
     }
   });
+
+  function initStats() {
+    return {
+      computeTaskCreated: 0,
+      computeTaskRemaining: 0,
+      computeTime: 0,
+      containers: {},
+      computeSpeed: 0
+    };
+  }
 
   function updateContainersStats() {
     $('#containersStats tbody').empty();
