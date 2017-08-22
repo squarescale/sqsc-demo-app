@@ -1,5 +1,6 @@
 $(document).ready(function() {
   let mandelbrotData = getInitialMandelbrotParameters();
+  let isComputing = false;
   
   function getInitialMandelbrotParameters() {
     return {
@@ -43,7 +44,7 @@ $(document).ready(function() {
     params.stepY = $('input#stepY').val();
 
     $.extend(params, mandelbrotData);
-
+    isComputing = true;
     $.ajax({
       method: 'POST',
       url: '/launch',
@@ -52,33 +53,40 @@ $(document).ready(function() {
         $('.error').removeClass('hidden');
         $('.error').text('Remote server not responding');
         $('button').removeAttr('disabled');
+        isComputing = false;
       }
     });
   }
 
   $('button#launchBtn').bind("click", function() {
-    launchComputation();
+    if (!isComputing) {
+      launchComputation();
+    }
   });
 
   $('button#resetBtn').bind("click", function() {
-    resetParameters();
+    if (!isComputing) {
+      resetParameters();
 
-    launchComputation();
+      launchComputation();
+    }
   });
 
   $('body').on('click', 'canvas#result', function(e) {
-    var offX = ((e.offsetX / mandelbrotData.width) - 0.5) * 2.0,
-      offY = ((e.offsetY / mandelbrotData.height) - 0.5) * 2.0,
-      newX = (offX * mandelbrotData.scaleX) + mandelbrotData.x,
-      newY = (offY * mandelbrotData.scaleY) + mandelbrotData.y;
-    $.extend(mandelbrotData, {
-      x: newX,
-      y: newY,
-      scaleX: mandelbrotData.scaleX * 0.5,
-      scaleY: mandelbrotData.scaleY * 0.5
-    });
-
-    launchComputation();
+    if (!isComputing) {
+      let offX = ((e.offsetX / mandelbrotData.width) - 0.5) * 2.0,
+        offY = ((e.offsetY / mandelbrotData.height) - 0.5) * 2.0,
+        newX = (offX * mandelbrotData.scaleX) + mandelbrotData.x,
+        newY = (offY * mandelbrotData.scaleY) + mandelbrotData.y;
+      $.extend(mandelbrotData, {
+        x: newX,
+        y: newY,
+        scaleX: mandelbrotData.scaleX * 0.5,
+        scaleY: mandelbrotData.scaleY * 0.5
+      });
+  
+      launchComputation();
+    }
   });
 
   const socket = io();
@@ -99,7 +107,7 @@ $(document).ready(function() {
     let image = new Image();
     image.src = data.result;
 
-    image.onload = () => ctx.drawImage(image, 0, 0, data.stepX, data.stepY, data.step, 0, data.stepX, data.stepY);
+    image.onload = () => ctx.drawImage(image, 0, 0, data.stepX, data.stepY, data.startX, data.startY, data.stepX, data.stepY);
   
     if (!stats.containers[data.container]) {
       stats.containers[data.container] = 0;
@@ -123,6 +131,8 @@ $(document).ready(function() {
       stats.maxIteration = data.iter;
 
       addNewResult(stats);
+
+      isComputing = false;
     }
   });
 
