@@ -1,5 +1,3 @@
-const async = require('async');
-
 const express = require('express');
 const config = require('./config/config');
 const db = require('./app/models');
@@ -12,60 +10,80 @@ const processingQueueName = process.env.PROCESSING_QUEUE_NAME || 'processingQueu
 const readingQueueName = process.env.READING_QUEUE_NAME || 'readingQueue';
 const rabbitMQUrl = process.env.RABBITMQ_HOST || 'rabbitmq.localhost';
 
-async function start() {
-  try {
+let channel, app;
 
-    // Initialise DB
-    await db.sequelize.sync({
-      force: true
-    });
-
-    // Initialise RabbitMQ channel
-    const connection = await amqp.connect(`amqp://` + rabbitMQUrl);
-    process.once('SIGINT', () => connection.close());
-
-    // Add reading queue results process
-    const channel = await connection.createChannel();
-    await channel.assertQueue(readingQueueName, {
-      durable: true
-    });
-    await channel.consume(readingQueueName, consumeQueue, {
-      noAck: true
-    });
-
-    // Initialise Socket-IO
-    const socketIO = await socket_io();
-
-    // Loading app
-    const app = await express();
-    app.set('rabbitMQChannel', channel);
-    app.set('socketIO', socketIO);
-    app.listen(config.port, function() {
-      socketIO.listen(this);
-      require('./config/express')(app, config);
-    });
-
-    async function consumeQueue(msg) {
-      var entityId = msg.content.toString();
-      console.log(` [x] Received info that task ${entityId} if done`);
-      const response = await db.Response.findById(parseInt(entityId));
-      console.log(` [->] Send result of task ${response.id} to web client`);
-      socketIO.emit("compute_task_result", response);
+async function handleQueueConnection() {
+  const connection = await amqp.connect(`amqp://` + rabbitMQUrl);
+  console.log('app - Connected to AMQP');
+  process.once('SIGINT', () => {
+    if (connection) {
+      connection.close();
     }
-  } catch (e) {
-    console.warn(e);
+  });
+
+  connection.on('error', (error) => console.error(error));
+  connection.on('close', () => {
+    console.log('app - Connection to AMQP closed. Retrying...');
+    setTimeout(initConnections, 1000);
+  });
+
+  return await connection.createChannel();
+}
+
+async function handleDatabaseConnection() {
+  await db.sequelize.sync();
+}
+
+async function initQueues(channel) {
+  await channel.prefetch(1);
+
+  await channel.assertQueue(processingQueueName, {
+    durable: true
+  });
+  
+  await channel.assertQueue(readingQueueName, {
+    durable: true
+  });
+}
+
+async function initConnections() {
+  try {
+    await handleDatabaseConnection();
+    
+    channel = await handleQueueConnection();
+    await initQueues(channel);
+    if (app) {
+      app.set('rabbitMQChannel', channel);
+      
+      async function consumeQueue(msg) {
+        const entityId = msg.content.toString();
+        console.log(`app - [x] Received info that task ${entityId} is done`);
+        const response = await db.Response.findById(parseInt(entityId));
+        console.log(`app - [->] Send result of task ${response.id} to web client`);
+        app.get('socketIO').emit("compute_task_result", response);
+        channel.ack(msg);
+      }
+  
+      channel.consume(readingQueueName, consumeQueue, { noAck: false });
+    }
+  } catch (err) {
+    console.error("app - [ERROR] "+err.message);
+    setTimeout(initConnections, 1000);
   }
 }
 
-// try to initialise db connection
-async.retry({
-    times: 10,
-    interval: function(retryCount) {
-      return 50 * Math.pow(2, retryCount);
-    },
-    errorFilter: function(err) {
-      console.warn(err.errno === 'ECONNREFUSED' ? "Retry to connect" : "All connections are established");
-      return err.errno === 'ECONNREFUSED'; // only retry on a specific error
-    }
-  },
-  start);
+async function start() {
+    app = await express();
+
+    await initConnections();
+
+    const socketIO = await socket_io();
+
+    app.set('socketIO', socketIO);
+
+    const server = app.listen(config.port);
+    socketIO.listen(server);
+    require('./config/express')(app, config);
+}
+
+start();
