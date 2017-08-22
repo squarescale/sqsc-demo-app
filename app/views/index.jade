@@ -5,7 +5,9 @@ block content
   .row.vertical-align
     h1.col-sm-6= title
     .col-sm-3
-      button.btn.btn-success.btn-block Launch
+      button#launchBtn.btn.btn-success.btn-block Launch
+    .col-sm-1
+      button#resetBtn.btn.btn-danger.btn-block Reset
   p Mathematical visualization of the 
     a(href="https://en.wikipedia.org/wiki/Mandelbrot_set", target="blank") Mandelbrot set
   
@@ -19,8 +21,8 @@ block content
       .panel-body
         .form-inline
           .form-group
-            label(for="precision") Precision
-            input#precision.form-control(type="number", value="1000")
+            label(for="maxIteration") Itérations max.
+            input#maxIteration.form-control(type="number", value="1000")
           .form-group
             label(for="stepX") StepX
             input#stepX.form-control(type="number", value="10")

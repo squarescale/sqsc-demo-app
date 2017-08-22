@@ -1,65 +1,48 @@
 $(document).ready(function() {
-  // var $loader = $('#loader').show();
-  let mandelData = {
-    x: 0,
-    y: 0,
-    scaleX: 1,
-    scaleY: 1,
-    width: 900,
-    height: 600,
-    iter: 100000
-  };
+  let mandelbrotData = getInitialMandelbrotParameters();
+  
+  function getInitialMandelbrotParameters() {
+    return {
+      x: 0,
+      y: 0,
+      scaleX: 1.5,
+      scaleY: 1,
+      width: 900,
+      height: 600
+    };
+  }
 
-  // TO TEST
-  // function loadImg() {
-  //   $('mandelImg').hide();
-  //   // $loader.show();
-  //   $.get('/image', mandelData)
-  //     .done(function(data) {
-  //       $('#img_results').prepend('<img id="theImg" src="'+data+'" />')
-  //       // $loader.hide(500);
-  //     })
-  //     .fail(function() {
-  //       // $loader.hide(500);
-  //     });
-  // }
-  //
-  // loadImg();
-  // END !! TO TEST
+  const initialMaxIteration = 1000;
+  const initialStepX = 10;
+  const initialStepY = 600;
 
-  // $('body').on('click', '#img_result', function(e) {
-  //
-  //   var offX = ((e.offsetX / mandelData.width) - 0.5) * 2.0,
-  //     offY = ((e.offsetY / mandelData.height) - 0.5) * 2.0,
-  //     newX = (offX * mandelData.scaleX) + mandelData.x,
-  //     newY = (offY * mandelData.scaleY) + mandelData.y;
-  //   $.extend(mandelData, {
-  //     x: newX,
-  //     y: newY,
-  //     scaleX: mandelData.scaleX * 0.5,
-  //     scaleY: mandelData.scaleY * 0.5
-  //   });
+  function resetParameters() {
+    mandelbrotData = getInitialMandelbrotParameters();
 
-    // TODO
-    // loadImg();
-  // });
+    $('input#maxIteration').val(initialMaxIteration);
+    $('input#stepX').val(initialStepX);
+    $('input#stepY').val(initialStepY);
+  }
 
-  let ctx = document.getElementById('result').getContext('2d');
+  const ctx = document.getElementById('result').getContext('2d');
   let start, end;
   let stats;
   let sessionResults = [];
-  let params = {};
 
-  $('button').bind("click", function() {
+  function launchComputation() {
     $('button').attr('disabled', 'disabled');
     $('.error').addClass('hidden');
+
     stats = initStats();
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, 900, 600);
 
-    params.precision = $('input#precision').val();
+    let params = {};
+    params.maxIteration = $('input#maxIteration').val();
     params.stepX = $('input#stepX').val();
     params.stepY = $('input#stepY').val();
+
+    $.extend(params, mandelbrotData);
 
     $.ajax({
       method: 'POST',
@@ -71,8 +54,33 @@ $(document).ready(function() {
         $('button').removeAttr('disabled');
       }
     });
+  }
+
+  $('button#launchBtn').bind("click", function() {
+    launchComputation();
   });
-  
+
+  $('button#resetBtn').bind("click", function() {
+    resetParameters();
+
+    launchComputation();
+  });
+
+  $('body').on('click', 'canvas#result', function(e) {
+    var offX = ((e.offsetX / mandelbrotData.width) - 0.5) * 2.0,
+      offY = ((e.offsetY / mandelbrotData.height) - 0.5) * 2.0,
+      newX = (offX * mandelbrotData.scaleX) + mandelbrotData.x,
+      newY = (offY * mandelbrotData.scaleY) + mandelbrotData.y;
+    $.extend(mandelbrotData, {
+      x: newX,
+      y: newY,
+      scaleX: mandelbrotData.scaleX * 0.5,
+      scaleY: mandelbrotData.scaleY * 0.5
+    });
+
+    launchComputation();
+  });
+
   const socket = io();
 
   socket.on('compute_task_created', () => {
@@ -112,6 +120,8 @@ $(document).ready(function() {
       stats.computeSpeed = 1000 * 900 * 600 / stats.computeTime;
       $('#computeSpeed').text(stats.computeSpeed.toLocaleString('fr', {maximumFractionDigits: 0}));
 
+      stats.maxIteration = data.iter;
+
       addNewResult(stats);
     }
   });
@@ -119,7 +129,7 @@ $(document).ready(function() {
   function initStats() {
     return {
       startTime: null,
-      precision: null,
+      maxIteration: null,
       computeTaskCreated: 0,
       computeTaskRemaining: 0,
       computeTime: 0,
@@ -145,7 +155,7 @@ $(document).ready(function() {
     $('table#results tbody').prepend(`
         <tr>
           <td>${new Date(stats.startTime).toLocaleTimeString()}</td>
-          <td>${params.precision}</td>
+          <td>${stats.maxIteration}</td>
           <td>${stats.computeTaskCreated}</td>
           <td>${Object.entries(stats.containers).length}</td>
           <td>${stats.computeTime}</td>

@@ -23,10 +23,7 @@ router.post('/launch', function(req, res) {
   let app = req.app;
   let taskMessage;
   for (var i = 0; i < imageWidth / params.stepX; i++) {
-    taskMessage = getTaskMessage(i * params.stepX, 
-      parseInt(params.precision), 
-      parseInt(params.stepX), 
-      parseInt(params.stepY));
+    taskMessage = getTaskMessage(params, i);
     app.get('rabbitMQChannel').sendToQueue(processingQueueName, taskMessage);
     console.log(`app - [x] Sent new task ${taskMessage}`);
     app.get('socketIO').emit('compute_task_created');
@@ -34,18 +31,18 @@ router.post('/launch', function(req, res) {
   res.sendStatus(200);
 });
 
-function getTaskMessage(col, precision, stepX, stepY) {
+function getTaskMessage(params, partIndex) {
 
   return Buffer.from(JSON.stringify({
-    x: 0,
-    y: 0,
-    scaleX: 1.5,
-    scaleY: 1,
-    width: imageWidth,
-    height: imageHeight,
-    step: col,
-    stepX : stepX || 10,
-    stepY : stepY || imageHeight,
-    iter: precision || 10
+    x: parseFloat(params.x),
+    y: parseFloat(params.y),
+    scaleX: parseFloat(params.scaleX),
+    scaleY: parseFloat(params.scaleY),
+    width: parseInt(params.width),
+    height: parseInt(params.height),
+    step: partIndex * parseInt(params.stepX),
+    stepX : parseInt(params.stepX) || 10,
+    stepY : parseInt(params.stepY) || imageHeight,
+    iter: parseInt(params.maxIteration) || 10
   }));
 }
