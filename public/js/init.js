@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  let mandelbrotData = getInitialMandelbrotParameters();
+  let mandelbrotData;
   let isComputing = false;
   
   function getInitialMandelbrotParameters() {
@@ -14,8 +14,8 @@ $(document).ready(function() {
   }
 
   const initialMaxIteration = 1000;
-  const initialStepX = 10;
-  const initialStepY = 600;
+  const initialStepX = 50;
+  const initialStepY = 50;
 
   function resetParameters() {
     mandelbrotData = getInitialMandelbrotParameters();
@@ -24,6 +24,8 @@ $(document).ready(function() {
     $('input#stepX').val(initialStepX);
     $('input#stepY').val(initialStepY);
   }
+
+  resetParameters();
 
   const ctx = document.getElementById('result').getContext('2d');
   let start, end;
