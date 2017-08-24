@@ -3,9 +3,7 @@ module.exports = function (sequelize, DataTypes) {
   var Response = sequelize.define('Response', {
     container: {
       type: DataTypes.STRING,
-      validate: {
-        notNull: true
-      }
+      allowNull: false
     },
     x: DataTypes.INTEGER,
     y: DataTypes.INTEGER,
@@ -15,24 +13,18 @@ module.exports = function (sequelize, DataTypes) {
     height: DataTypes.INTEGER,
     startX: {
       type: DataTypes.INTEGER,
-      validate: {
-        notNull: true
-      }
+      allowNull: false
     },
     startY: {
       type: DataTypes.INTEGER,
-      validate: {
-        notNull: true
-      }
+      allowNull: false
     },
     stepX: DataTypes.INTEGER,
     stepY: DataTypes.INTEGER,
     iter: DataTypes.INTEGER,
     result: {
       type: DataTypes.TEXT,
-      validate: {
-        notNull: true
-      }
+      allowNull: false
     }
   });
 
