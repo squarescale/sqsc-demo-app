@@ -22,7 +22,7 @@ router.post('/launch', function(req, res) {
       taskMessage = getTaskMessage(params, currentX, currentY);
       app.get('rabbitMQChannel').sendToQueue(processingQueueName, taskMessage);
       console.log(`app - [x] Sent new task ${taskMessage}`);
-      app.get('socketIO').emit('compute_task_created');
+      app.get('socketIO').emit('compute_task_created', {clientToken: params.clientToken});
     }
   }
   res.sendStatus(200);
@@ -41,6 +41,7 @@ function getTaskMessage(params, currentX, currentY) {
     startY: currentY,
     stepX : parseInt(params.stepX) || 10,
     stepY : parseInt(params.stepY) || 10,
-    iter: parseInt(params.maxIteration) || 10
+    iter: parseInt(params.maxIteration) || 10,
+    clientToken: params.clientToken
   }));
 }

@@ -32,6 +32,8 @@ $(document).ready(function() {
   let stats;
   let sessionResults = [];
 
+  const UUID = Math.floor(Date.now());
+
   function launchComputation() {
     $('button').attr('disabled', 'disabled');
     $('.error').addClass('hidden');
@@ -44,6 +46,7 @@ $(document).ready(function() {
     params.maxIteration = $('input#maxIteration').val();
     params.stepX = $('input#stepX').val();
     params.stepY = $('input#stepY').val();
+    params.clientToken = UUID;
 
     $.extend(params, mandelbrotData);
     isComputing = true;
@@ -93,7 +96,10 @@ $(document).ready(function() {
 
   const socket = io();
 
-  socket.on('compute_task_created', () => {
+  socket.on('compute_task_created', (data) => {
+    if(data.clientToken != UUID){
+      return;
+    }
     if (stats.computeTaskCreated === 0) {
       stats.startTime = new Date().getTime();
       $('#stats').removeClass('hidden');
@@ -106,6 +112,9 @@ $(document).ready(function() {
   });
 
   socket.on('compute_task_result', function(data) {
+    if(data.clientToken != UUID){
+      return;
+    }
     let image = new Image();
     image.src = data.result;
 

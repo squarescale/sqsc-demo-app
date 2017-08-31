@@ -74,16 +74,15 @@ async function initConnections() {
 
 async function start() {
     app = await express();
+    require('./config/express')(app, config);
 
     await initConnections();
 
     const socketIO = await socket_io();
-
     app.set('socketIO', socketIO);
 
     const server = app.listen(config.port);
     socketIO.listen(server);
-    require('./config/express')(app, config);
 }
 
 start();

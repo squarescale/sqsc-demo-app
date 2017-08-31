@@ -25,7 +25,8 @@ module.exports = function (sequelize, DataTypes) {
     result: {
       type: DataTypes.TEXT,
       allowNull: false
-    }
+    },
+    clientToken: DataTypes.BIGINT
   });
 
   return Response;
