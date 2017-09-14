@@ -12,3 +12,18 @@ Tests are written with mocha.
 
 # Documentation
   - Sequelize is a based ORM for Node.js : http://docs.sequelizejs.com/
+
+# Deploy on SquareScale
+
+This app nedds to be deployed along:
+  - https://github.com/squarescale/sqsc-demo-app
+  - `rabbitmq` docker image
+
+Mandatory common environment variables to add:
+  - `PROCESSING_QUEUE_NAME`: any name
+  - `READING_QUEUE_NAME`: any name
+  - `NODE_ENV`: `production`
+  - `COMMON_DB_USERNAME`: copy value of common `DB_USERNAME`
+  - `COMMON_DB_PASSWORD`: copy value of common `DB_PASSWORD`
+  - `COMMON_DB_NAME`: copy value of common `DB_NAME`
+  - `RABBITMQ_HOST`: url of rabbitmq service in the cluster, usually `rabbitmq.service.consul`
