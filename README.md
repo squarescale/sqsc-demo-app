@@ -15,8 +15,8 @@ Tests are written with mocha.
 
 # Deploy on SquareScale
 
-This app nedds to be deployed along:
-  - https://github.com/squarescale/sqsc-demo-app
+This app needs to be deployed along:
+  - https://github.com/squarescale/sqsc-demo-worker
   - `rabbitmq` docker image
 
 Mandatory common environment variables to add:
