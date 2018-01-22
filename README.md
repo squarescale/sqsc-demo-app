@@ -23,7 +23,7 @@ Mandatory common environment variables to add:
   - `PROCESSING_QUEUE_NAME`: any name
   - `READING_QUEUE_NAME`: any name
   - `NODE_ENV`: `production`
-  - `COMMON_DB_USERNAME`: copy value of common `DB_USERNAME`
-  - `COMMON_DB_PASSWORD`: copy value of common `DB_PASSWORD`
-  - `COMMON_DB_NAME`: copy value of common `DB_NAME`
+  - `PROJECT_DB_USERNAME`: already provided by Squarescale
+  - `PROJECT_DB_PASSWORD`: already provided by Squarescale   
+  - `PROJECT_DB_NAME`: already provided by Squarescale
   - `RABBITMQ_HOST`: url of rabbitmq service in the cluster, usually `rabbitmq.service.consul`
