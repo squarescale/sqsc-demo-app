@@ -3,12 +3,13 @@ const config = require('./config/config');
 const db = require('./app/models');
 const socket_io = require('socket.io');
 const amqp = require('amqplib');
-
+const redis = require('socket.io-redis');
 const Response = db.Response;
 
 const processingQueueName = process.env.PROCESSING_QUEUE_NAME || 'processingQueue';
 const readingQueueName = process.env.READING_QUEUE_NAME || 'readingQueue';
 const rabbitMQUrl = process.env.RABBITMQ_HOST || 'rabbitmq.localhost';
+const redisHost = process.env.REDIS_HOST || 'redis.localhost';
 
 let channel, app;
 
@@ -40,7 +41,7 @@ async function initQueues(channel) {
   await channel.assertQueue(processingQueueName, {
     durable: true
   });
-  
+
   await channel.assertQueue(readingQueueName, {
     durable: true
   });
@@ -49,12 +50,12 @@ async function initQueues(channel) {
 async function initConnections() {
   try {
     await handleDatabaseConnection();
-    
+
     channel = await handleQueueConnection();
     await initQueues(channel);
     if (app) {
       app.set('rabbitMQChannel', channel);
-      
+
       async function consumeQueue(msg) {
         const entityId = msg.content.toString();
         console.log(`app - [x] Received info that task ${entityId} is done`);
@@ -63,7 +64,7 @@ async function initConnections() {
         app.get('socketIO').emit("compute_task_result", response);
         channel.ack(msg);
       }
-  
+
       channel.consume(readingQueueName, consumeQueue, { noAck: false });
     }
   } catch (err) {
@@ -79,6 +80,8 @@ async function start() {
     await initConnections();
 
     const socketIO = await socket_io();
+    socketIO.adapter(redis({ host: redisHost }));
+
     app.set('socketIO', socketIO);
 
     const server = app.listen(config.port);

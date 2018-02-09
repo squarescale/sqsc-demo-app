@@ -18,12 +18,14 @@ Tests are written with mocha.
 This app needs to be deployed along:
   - https://github.com/squarescale/sqsc-demo-worker
   - `rabbitmq` docker image
+  - `redis` docker image
 
 Mandatory common environment variables to add:
   - `PROCESSING_QUEUE_NAME`: any name
   - `READING_QUEUE_NAME`: any name
   - `NODE_ENV`: `production`
   - `PROJECT_DB_USERNAME`: already provided by Squarescale
-  - `PROJECT_DB_PASSWORD`: already provided by Squarescale   
+  - `PROJECT_DB_PASSWORD`: already provided by Squarescale
   - `PROJECT_DB_NAME`: already provided by Squarescale
   - `RABBITMQ_HOST`: url of rabbitmq service in the cluster, usually `rabbitmq.service.consul`
+  - `REDIS_HOST`: url of redis service in the cluster
