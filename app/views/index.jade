@@ -2,39 +2,58 @@ extends layout
 
 block content
 
-  .row.vertical-align
-    h1.col-sm-6= title
-    .col-sm-3
-      button#launchBtn.btn.btn-success.btn-block Launch
-    .col-sm-1
-      button#resetBtn.btn.btn-danger.btn-block Reset
-  p Mathematical visualization of the 
-    a(href="https://en.wikipedia.org/wiki/Mandelbrot_set", target="blank") Mandelbrot set
+  h1.grid-column-1-10= title
+  .grid-column-11-13
+    button#launchBtn.btn.btn-success.btn-block Launch
+  .grid-column-15-16
+    button#resetBtn.btn.btn-danger.btn-block Reset
+
+  .grid-column-1-16
+    p Mathematical visualization of the 
+      a(href="https://en.wikipedia.org/wiki/Mandelbrot_set", target="blank") Mandelbrot set
   
-  .alert.alert-danger.error.hidden(role="alert")
+  .grid-column-1-16
+    .alert.alert-danger.error.hidden(role="alert")
 
-  .panel
-    .panel-heading
-      h4.panel-title
-        a.btn.btn-default(data-toggle="collapse", href="#parameters") Change parameters
-    #parameters.panel-collapse.collapse
-      .panel-body
-        .form-inline
-          .form-group
-            label(for="maxIteration") Max iterations
-            input#maxIteration.form-control(type="number")
-          .form-group
-            label(for="stepX") StepX
-            input#stepX.form-control(type="number")
-          .form-group
-            label(for="stepY") StepY
-            input#stepY.form-control(type="number")
+  .grid-column-1-16
+    .panel
+      .panel-heading
+        h4.panel-title
+          a.btn.btn-default(data-toggle="collapse", href="#parameters") Change parameters
+      #parameters.panel-collapse.collapse
+        .panel-body
+          .form-inline
+            .form-group
+              label(for="maxIteration") Max iterations
+              input#maxIteration.form-control(type="number")
+            .form-group
+              label(for="stepX") StepX
+              input#stepX.form-control(type="number")
+            .form-group
+              label(for="stepY") StepY
+              input#stepY.form-control(type="number")
 
-  hr
+  .grid-column-1-16
+    hr
 
-  .row
-    canvas#result(width="900",height="600")
-    #stats.col-sm-2.pull-right.hidden
+  .grid-column-1-11
+    canvas#result(width="780",height="520")
+    hr
+    #sessionResults.hidden
+      h2 Session results
+      table#results.table
+        thead
+          tr
+            th Start Time
+            th Precision (max iteration)
+            th Tasks
+            th Workers
+            th Compute time (ms)
+            th Compute speed (computation / second)
+          tbody
+
+  .grid-column-13-16
+    #stats.pull-right.hidden
       dl
         dt Tasks created
         dd#computeTaskCount
@@ -49,19 +68,4 @@ block content
           tr
             th Docker container Id
             th Tasks computed 
-        tbody
-
-  hr
-
-  #sessionResults.hidden
-    h2 Session results
-    table#results.table
-      thead
-        tr
-          th Start Time
-          th Precision (max iteration)
-          th Tasks
-          th Workers
-          th Compute time (ms)
-          th Compute speed (computation / second)
         tbody

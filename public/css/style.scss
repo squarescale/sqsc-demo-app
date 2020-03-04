@@ -3,6 +3,45 @@
  */
 /* Move down content because we have a fixed navbar that is 50px tall */
 body { }
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+}
+
+.grid-column-1-16 {
+  grid-column: 1 / 17;
+  align-self: center;
+}
+
+.grid-column-1-10 {
+  grid-column: 1 / 11;
+  align-self: center;
+}
+
+.grid-column-1-11 {
+  grid-column: 1 / 12;
+}
+
+.grid-column-13-16 {
+  grid-column: 13 / 17;
+}
+
+.grid-column-11-13 {
+  grid-column: 11 / 14;
+  align-self: center;
+}
+
+.grid-column-15-16 {
+  grid-column: 15 / 17;
+  align-self: center;
+}
+
+hr {
+  height: 3px; 
+  background: black;
+}
+
 /*
  * Global add-ons
  */
