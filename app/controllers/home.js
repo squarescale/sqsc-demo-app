@@ -8,8 +8,12 @@ module.exports = function(app) {
 };
 
 router.get('/', function(req, res, next) {
+  let app = req.app;
+  let infos = app.get('infos');
   res.render('index', {
-    title: 'SquareScale demo'
+    title: 'SquareScale demo',
+    rhost: infos.host,
+    rip: infos.ip
   });
 });
 

@@ -3,6 +3,8 @@ const config = require('./config/config');
 const db = require('./app/models');
 const socket_io = require('socket.io');
 const amqp = require('amqplib');
+const os = require('os');
+const underscore = require('underscore');
 
 const Response = db.Response;
 
@@ -73,8 +75,13 @@ async function initConnections() {
 }
 
 async function start() {
+    hostname = os.hostname();
+    ipaddress = underscore.chain(os.networkInterfaces()).values().flatten().find({family: 'IPv4', internal: false}).value().address;
+    infos = {host: hostname, ip: ipaddress};
+
     app = await express();
     require('./config/express')(app, config);
+    app.set('infos', infos);
 
     await initConnections();
 
