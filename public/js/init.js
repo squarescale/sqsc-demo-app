@@ -161,12 +161,16 @@ $(document).ready(function() {
 
   function updateContainersStats() {
     $('#containersStats tbody').empty();
+    idx = 0;
+    maxl = Object.entries(stats.containers).length;
     Object.entries(stats.containers).forEach(([containerId, count]) => {
       $('#containersStats tbody').append(`
         <tr>
+          <td>${maxl - idx}</td>
           <td>${containerId}</td>
           <td>${count}</td>
-        </tr>`)
+        </tr>`);
+      idx++;
     });
   }
 
@@ -175,6 +179,7 @@ $(document).ready(function() {
     $('#sessionResults').removeClass('hidden');
     $('table#results tbody').prepend(`
         <tr>
+          <td>${Object.entries(sessionResults).length}</td>
           <td>${new Date(stats.startTime).toLocaleTimeString()}</td>
           <td>${stats.maxIteration}</td>
           <td>${stats.computeTaskCreated}</td>

@@ -9,9 +9,9 @@ block content
     button#resetBtn.btn.btn-danger.btn-block Reset
 
   .grid-column-1-16
-    p Mathematical visualization of the 
+    p Mathematical visualization of the
       a(href="https://en.wikipedia.org/wiki/Mandelbrot_set", target="blank") Mandelbrot set
-  
+
   .grid-column-1-16
     .alert.alert-danger.error.hidden(role="alert")
 
@@ -44,28 +44,30 @@ block content
       table#results.table
         thead
           tr
+            th Run ID
             th Start Time
             th Precision (max iteration)
-            th Tasks
-            th Workers
+            th # Tasks
+            th # Workers
             th Compute time (ms)
-            th Compute speed (computation / second)
+            th Compute speed (#ops/s)
           tbody
 
   .grid-column-13-16
     #stats.pull-right.hidden
       dl
-        dt Tasks created
+        dt # Tasks total
         dd#computeTaskCount
-        dt Tasks remaining
+        dt # Tasks remaining
         dd#computeTaskRemaining
-        dt Total compute time 
+        dt Total compute time
         dd.time
-        dt Compute speed (computation / second)
+        dt Compute speed (#ops/s)
         dd#computeSpeed
       table#containersStats.table.table-striped.center
         thead
           tr
-            th Docker container Id
-            th Tasks computed 
+            th ID
+            th Container
+            th # Tasks
         tbody
