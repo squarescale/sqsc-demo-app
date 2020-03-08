@@ -5,6 +5,7 @@ const socket_io = require('socket.io');
 const amqp = require('amqplib');
 const os = require('os');
 const underscore = require('underscore');
+const superagent = require('superagent');
 
 const Response = db.Response;
 
@@ -74,10 +75,40 @@ async function initConnections() {
   }
 }
 
+async function getAWSMetaData() {
+    try {
+	const res = await superagent.get('http://169.254.169.254/latest/dynamic/instance-identity/document');
+	return JSON.parse(res.res.text);
+    } catch (err) {
+	console.error(err);
+	return {}
+    }
+}
+
+// TODO: http://169.254.169.254/latest/meta-data/hostname
+// => ip-10-0-39-24.eu-west-1.compute.internal
+
 async function start() {
+    // System informations
     hostname = os.hostname();
     ipaddress = underscore.chain(os.networkInterfaces()).values().flatten().find({family: 'IPv4', internal: false}).value().address;
+
+    // Setup global informations for this app
     infos = {host: hostname, ip: ipaddress};
+
+    // Platform informations
+    getAWSMetaData().then(
+			  function(res){
+			      //console.log('METADATA');
+			      //console.log(res);
+			      if (Object.keys(res).length > 0) {
+				  infos.availabilityZone = res.availabilityZone;
+				  infos.instanceId = res.instanceId;
+				  infos.instanceType = res.instanceType;
+				  infos.privateIp = res.privateIp;
+			      }
+			  }
+    );
 
     app = await express();
     require('./config/express')(app, config);

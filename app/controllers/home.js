@@ -12,8 +12,7 @@ router.get('/', function(req, res, next) {
   let infos = app.get('infos');
   res.render('index', {
     title: 'SquareScale demo',
-    rhost: infos.host,
-    rip: infos.ip
+    infos: infos
   });
 });
 
