@@ -139,7 +139,7 @@ async function start() {
           infos.availabilityZone = res.compute.location;
           infos.instanceId = res.compute.name;
           infos.instanceType = res.compute.vmSize;
-          infos.privateIp = res.privateIp;
+          infos.privateIp = res.network.interface[0].ipv4.ipAddress[0].privateIpAddress;
           infos.cloudProvider= 'azure';
         }
       }
