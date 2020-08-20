@@ -106,6 +106,7 @@ async function start() {
 				  infos.instanceId = res.instanceId;
 				  infos.instanceType = res.instanceType;
 				  infos.privateIp = res.privateIp;
+				  infos.cloudProvider= 'aws';
 			      }
 			  }
     );

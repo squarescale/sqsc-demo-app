@@ -2,6 +2,9 @@ extends layout
 
 block content
 
+  .grid-column-1-16
+    img.image(src='/img/#{infos.cloudProvider}_logo.png', title='#{infos.cloudProvider} cloud', alt='Running on #{infos.cloudProvider}', width='75')
+
   h1.grid-column-1-10= title
   .grid-column-11-13
     button#launchBtn.btn.btn-success.btn-block Launch
@@ -11,8 +14,8 @@ block content
   .grid-column-1-16
     h4 Running on Container: #{infos.host} Container IP: #{infos.ip}
 
-  if infos.instanceId
-    .grid-column-1-16
+  .grid-column-1-16
+    if infos.instanceId
       h4 Running on Instance: #{infos.instanceId} Availability zone: #{infos.availabilityZone} Type: #{infos.instanceType} IP: #{infos.privateIp}
 
   .grid-column-1-16
