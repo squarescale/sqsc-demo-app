@@ -12,6 +12,7 @@ RUN npm install
 COPY . /usr/src/app
 
 # Install BOWER dependencies
+RUN npm config set unsafe-perm true
 RUN echo '{ "allow_root": true }' > /root/.bowerrc
 COPY .bowerrc .
 COPY bower.json .

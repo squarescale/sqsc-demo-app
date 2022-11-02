@@ -106,6 +106,31 @@ async function getAzureMetaData() {
       return {}
     }
 }
+async function getOutscaleMetaData() {
+
+    try {
+      const req = await superagent.get('http://169.254.169.254/latest/meta-data/tags/origin');
+
+	    if (req.res.text.search('outscale')) {
+	      const localipv4 = await superagent.get('http://169.254.169.254/latest/meta-data/local-ipv4');
+	      const az = await superagent.get('http://169.254.169.254/latest/meta-data/placement/availability-zone');
+	      const it = await superagent.get('http://169.254.169.254/latest/meta-data/instance-type');
+	      const ii = await superagent.get('http://169.254.169.254/latest/meta-data/instance-id');
+	      return {'availabilityZone': az.res.text, 'privateIp': localipv4.res.text, 'instanceType': it.res.text, 'instanceId': ii.res.text};
+      }
+      console.log("Outscale not detected");
+      return {};
+    } catch (err) {
+      if (err.status === 404) {
+        console.log(err.response.request.url);
+        console.log('Unable to get Outscale metadata at ' + err.response.request.url);
+      } else {
+        console.log('getOutscaleMetaData ERROR');
+        console.error(err);
+      }
+      return {}
+    }
+}
 
 
 // TODO: http://169.254.169.254/latest/meta-data/hostname
@@ -141,6 +166,18 @@ async function start() {
           infos.instanceType = res.compute.vmSize;
           infos.privateIp = res.network.interface[0].ipv4.ipAddress[0].privateIpAddress;
           infos.cloudProvider= 'azure';
+        }
+      }
+    );
+
+    getOutscaleMetaData().then(
+      function(res){
+        if (Object.keys(res).length > 0) {
+          infos.availabilityZone = res.availabilityZone;
+          infos.instanceId = res.instanceId;
+          infos.instanceType = res.instanceType;
+          infos.privateIp = res.privateIp;
+          infos.cloudProvider= 'outscale';
         }
       }
     );
